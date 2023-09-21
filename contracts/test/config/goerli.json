@@ -1,0 +1,9 @@
+{
+    "genesisValidatorRoot": "0x043db0d9a83813551ee2f33450d23797757d430911a9320530ad8a0eabc43efb",
+    "genesisTime": 1616508000,
+    "secondsPerSlot": 12,
+    "forkVersion": "0x02001020",
+    "startSyncCommitteePeriod": 622,
+    "startSyncCommitteeRoot": "0x3e550c1ec5b6ce738f0f377dad7dabb3db732075bb2f716617bd2670326f51e2",
+    "startSyncCommitteePoseidon": 15723372587160775010106261491283302547283441397492210875652651465207522176490
+}
