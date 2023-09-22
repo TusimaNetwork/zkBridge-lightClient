@@ -1,0 +1,32 @@
+{
+  "name": "zkbridge_lightclient_circuits",
+  "version": "1.0.0",
+  "description": "circuits part of the on-chain light client",
+  "main": "index.js",
+  "scripts": {
+    "preinstall": "cd ./utils/circom-pairing && npm i"
+  },
+  "devDependencies": {
+  },
+  "dependencies": {
+    "circomlib": "^2.0.5",
+    "chai": "^4.3.7",
+    "circom_tester": "^0.0.19",
+    "mocha": "^10.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TusimaNetwork/zkBridge-lightClient.git"
+  },
+  "keywords": [
+    "zk",
+    "circuits",
+    "circom"
+  ],
+  "author": "iwan.eth",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TusimaNetwork/zkBridge-lightClient/issues"
+  },
+  "homepage": "https://github.com/TusimaNetwork/zkBridge-lightClient#readme"
+}

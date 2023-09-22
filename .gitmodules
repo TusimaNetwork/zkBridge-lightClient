@@ -4,3 +4,9 @@
 [submodule "contracts/lib/openzeppelin-contracts"]
 	path = contracts/lib/openzeppelin-contracts
 	url = https://github.com/openzeppelin/openzeppelin-contracts
+[submodule "circuits/utils/circom-pairing"]
+	path = circuits/utils/circom-pairing
+	url = https://github.com/TusimaNetwork/circom-pairing.git
+[submodule "circuits/utils/circom-sha256"]
+	path = circuits/utils/circom-sha256
+	url = https://github.com/TusimaNetwork/circom-sha256.git
