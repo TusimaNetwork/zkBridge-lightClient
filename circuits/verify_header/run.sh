@@ -5,7 +5,7 @@
 # 2. Generates a witness
 # 3. Generates a trusted setup (if not generated)
 # 4. Generates a proof
-# 5. Generates TX calldata for the verifier contract (`step`)
+# 5. Generates TX calldata for the verifier contract (`verify_header.sol`)
 
 set -e
 
