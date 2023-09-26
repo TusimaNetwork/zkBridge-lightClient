@@ -18,7 +18,7 @@ BUILD_DIR=$BASE_CIRCUIT_DIR/build
 COMPILED_DIR=$BUILD_DIR/compiled_circuit
 TRUSTED_SETUP_DIR=$BUILD_DIR/trusted_setup
 
-SYNC_COMMITTEE_PROOF=$BASE_CIRCUIT_DIR/proof_data_${SYNC_COMMITTEE_PERIOD}
+SYNC_COMMITTEE_PROOF=$BASE_CIRCUIT_DIR/proof_data_${PERIOD}
 CIRCUIT_NAME=verify_sync_committee
 CIRCUIT_PATH=$BASE_CIRCUIT_DIR/$CIRCUIT_NAME.circom
 OUTPUT_DIR=$COMPILED_DIR/$CIRCUIT_NAME_cpp
@@ -32,7 +32,7 @@ NODE_PATH=../../../node/out/Release/node
 PROVER_PATH=../../../rapidsnark/build/prover
 
 run() {
-  echo "SYNC_COMMITTEE_PERIOD: $SYNC_COMMITTEE_PERIOD"
+  echo "SYNC_COMMITTEE_PERIOD: $PERIOD"
 
   if [ ! -d "$BUILD_DIR" ]; then
     echo "No build directory found. Creating build directory..."
@@ -75,7 +75,7 @@ run() {
 
   echo "====Generate Witness===="
   start=$(date +%s)
-  "$COMPILED_DIR"/"$CIRCUIT_NAME"_cpp/"$CIRCUIT_NAME" "$INPUT_DIR"/${SYNC_COMMITTEE_PROOF}_input.json "$COMPILED_DIR"/"$CIRCUIT_NAME"_cpp/witness.wtns
+  "$COMPILED_DIR"/"$CIRCUIT_NAME"_cpp/"$CIRCUIT_NAME" "$INPUT_DIR"/${PERIOD}_input.json "$COMPILED_DIR"/"$CIRCUIT_NAME"_cpp/witness.wtns
   end=$(date +%s)
   echo "DONE ($((end - start))s)"
 
@@ -123,7 +123,7 @@ run() {
 #  Bug in snarkjs. Error: Scalar size does not match. Verification goes through using the Verifier contract
 #  echo "====VERIFYING PROOF FOR SYNC COMMITTEE PERIOD===="
 #  start=$(date +%s)
-#  node ../node_modules/snarkjs/cli.js groth16 verify "$TRUSTED_SETUP_DIR"/vkey.json ./"$INPUT_DIR"/${SYNC_COMMITTEE_PROOF}_input.json "$SYNC_COMMITTEE_PROOF"/proof.json
+#  node ../node_modules/snarkjs/cli.js groth16 verify "$TRUSTED_SETUP_DIR"/vkey.json ./"$INPUT_DIR"/${PERIOD}_input.json "$SYNC_COMMITTEE_PROOF"/proof.json
 #  end=$(date +%s)
 #  echo "DONE ($((end - start))s)"
 

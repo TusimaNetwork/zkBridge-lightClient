@@ -14,11 +14,11 @@
 2. Build circuit `verify_header`
     ```bash
     cd verify_header
-    bash run.sh
+    SLOT=6154570 bash run.sh
     ```
 
 1. Build circuit `verify_syncCommittee`
     ```bash
     cd verify_syncCommittee
-    SLOT=6154570 bash run.sh
+    bash run.sh
     ```
