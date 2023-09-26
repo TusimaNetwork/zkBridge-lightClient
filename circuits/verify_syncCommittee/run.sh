@@ -33,7 +33,6 @@ PROVER_PATH=../../../rapidsnark/build/prover
 
 run() {
   echo "SYNC_COMMITTEE_PERIOD: $SYNC_COMMITTEE_PERIOD"
-  echo "Node URL: $BEACON_NODE_API"
 
   if [ ! -d "$BUILD_DIR" ]; then
     echo "No build directory found. Creating build directory..."
@@ -55,12 +54,10 @@ run() {
     mkdir "$SYNC_COMMITTEE_PROOF"
   fi
 
-  echo "====GENERATING INPUT FOR PROOF===="
-  echo $SYNC_COMMITTEE_PROOF/input.json
-  start=$(date +%s)
-  BEACON_NODE_API=$BEACON_NODE_API yarn ts-node --project tsconfig.json ./syncCommitteeComittment/index.ts --period ${SYNC_COMMITTEE_PERIOD}
-  end=$(date +%s)
-  echo "DONE ($((end - start))s)"
+  if [ ! -d "$VERIFIER_DIR" ]; then
+    echo "No verifiyer directory found. Creating a verifiyer directory..."
+    mkdir "$VERIFIER_DIR"
+  fi
 
   if [ ! -f "$COMPILED_DIR"/"$CIRCUIT_NAME".r1cs ]; then
     echo "==== COMPILING CIRCUIT $CIRCUIT_NAME.circom ===="
@@ -78,7 +75,7 @@ run() {
 
   echo "====Generate Witness===="
   start=$(date +%s)
-  "$COMPILED_DIR"/"$CIRCUIT_NAME"_cpp/"$CIRCUIT_NAME" "$SYNC_COMMITTEE_PROOF"/input.json "$COMPILED_DIR"/"$CIRCUIT_NAME"_cpp/witness.wtns
+  "$COMPILED_DIR"/"$CIRCUIT_NAME"_cpp/"$CIRCUIT_NAME" "$INPUT_DIR"/${SYNC_COMMITTEE_PROOF}_input.json "$COMPILED_DIR"/"$CIRCUIT_NAME"_cpp/witness.wtns
   end=$(date +%s)
   echo "DONE ($((end - start))s)"
 
@@ -126,7 +123,7 @@ run() {
 #  Bug in snarkjs. Error: Scalar size does not match. Verification goes through using the Verifier contract
 #  echo "====VERIFYING PROOF FOR SYNC COMMITTEE PERIOD===="
 #  start=$(date +%s)
-#  node ../node_modules/snarkjs/cli.js groth16 verify "$TRUSTED_SETUP_DIR"/vkey.json ./"$SYNC_COMMITTEE_PROOF"/input.json "$SYNC_COMMITTEE_PROOF"/proof.json
+#  node ../node_modules/snarkjs/cli.js groth16 verify "$TRUSTED_SETUP_DIR"/vkey.json ./"$INPUT_DIR"/${SYNC_COMMITTEE_PROOF}_input.json "$SYNC_COMMITTEE_PROOF"/proof.json
 #  end=$(date +%s)
 #  echo "DONE ($((end - start))s)"
 
@@ -137,6 +134,14 @@ run() {
   end=$(date +%s)
   echo "DONE ($((end - start))s)"
 
+  # Generate verifier contract
+  if [ ! -f "$VERIFIER_DIR"/"$CIRCUIT_NAME".sol ]; then
+    echo "====GENERATING VERIFIER CONTRACT===="
+    start=$(date +%s)
+    node ../node_modules/snarkjs/cli.js zkey export solidityverifier "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey "$VERIFIER_DIR"/"$CIRCUIT_NAME".sol
+    end=$(date +%s)
+    echo "DONE ($((end - start))s)"
+  fi
 }
 
 mkdir -p logs
