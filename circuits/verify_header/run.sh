@@ -117,7 +117,7 @@ run() {
 
   echo "====VERIFYING PROOF FOR GIVEN SLOT===="
   start=$(date +%s)
-  node ../node_modules/snarkjs/cli.js groth16 verify "$TRUSTED_SETUP_DIR"/vkey.json ./"$INPUT_DIR"/${SLOT}_input.json "$SLOT_PROOF"/proof.json
+  node ../node_modules/snarkjs/cli.js groth16 verify "$TRUSTED_SETUP_DIR"/vkey.json "$INPUT_DIR"/${SLOT}_input.json "$SLOT_PROOF"/proof.json
   end=$(date +%s)
   echo "DONE ($((end - start))s)"
 
