@@ -20,5 +20,5 @@
 1. Build circuit `verify_syncCommittee`
     ```bash
     cd verify_syncCommittee
-    bash run.sh
+    SLOT=6154570 bash run.sh
     ```
