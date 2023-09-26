@@ -54,6 +54,11 @@ run() {
     mkdir "$SLOT_PROOF"
   fi
 
+  if [ ! -d "$VERIFIER_DIR" ]; then
+    echo "No verifiyer directory found. Creating a verifiyer directory..."
+    mkdir "$VERIFIER_DIR"
+  fi
+
   if [ ! -f "$COMPILED_DIR"/"$CIRCUIT_NAME".r1cs ]; then
     echo "==== COMPILING CIRCUIT $CIRCUIT_NAME.circom ===="
     start=$(date +%s)
