@@ -28,6 +28,9 @@ VERIFIER_DIR=$BASE_CIRCUIT_DIR/contract
 # A patched node
 NODE_PATH=../../../node/out/Release/node
 
+# Rapid snark prover
+PROVER_PATH=../../../rapidsnark/build/prover
+
 run() {
   echo "SYNC_COMMITTEE_PERIOD: $SYNC_COMMITTEE_PERIOD"
   echo "Node URL: $BEACON_NODE_API"
@@ -91,32 +94,32 @@ run() {
   if test ! -f "$TRUSTED_SETUP_DIR/vkey.json"; then
     echo "====Generating zkey===="
     start=$(date +%s)
-    node --trace-gc --trace-gc-ignore-scavenger --max-old-space-size=2048000 --initial-old-space-size=2048000 --no-global-gc-scheduling --no-incremental-marking --max-semi-space-size=1024 --initial-heap-size=2048000 --expose-gc ../node_modules/snarkjs/cli.js zkey new "$COMPILED_DIR"/"$CIRCUIT_NAME".r1cs "$PHASE1" "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME"_p1.zkey
+    $NODE_PATH --trace-gc --trace-gc-ignore-scavenger --max-old-space-size=2048000 --initial-old-space-size=2048000 --no-global-gc-scheduling --no-incremental-marking --max-semi-space-size=1024 --initial-heap-size=2048000 --expose-gc ../node_modules/snarkjs/cli.js zkey new "$COMPILED_DIR"/"$CIRCUIT_NAME".r1cs "$PHASE1" "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME"_p1.zkey
     end=$(date +%s)
     echo "DONE ($((end - start))s)"
 
     echo "====Contribute to Phase2 Ceremony===="
     start=$(date +%s)
-    node ../node_modules/snarkjs/cli.js zkey contribute "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME"_p1.zkey "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey -n="First phase2 contribution" -e="some random text for entropy"
+    $NODE_PATH ../node_modules/snarkjs/cli.js zkey contribute "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME"_p1.zkey "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey -n="First phase2 contribution" -e="some random text for entropy"
     end=$(date +%s)
     echo "DONE ($((end - start))s)"
 
     echo "====VERIFYING FINAL ZKEY===="
     start=$(date +%s)
-    node --trace-gc --trace-gc-ignore-scavenger --max-old-space-size=2048000 --initial-old-space-size=2048000 --no-global-gc-scheduling --no-incremental-marking --max-semi-space-size=1024 --initial-heap-size=2048000 --expose-gc ../node_modules/snarkjs/cli.js zkey verify "$COMPILED_DIR"/"$CIRCUIT_NAME".r1cs "$PHASE1" "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey
+    $NODE_PATH --trace-gc --trace-gc-ignore-scavenger --max-old-space-size=2048000 --initial-old-space-size=2048000 --no-global-gc-scheduling --no-incremental-marking --max-semi-space-size=1024 --initial-heap-size=2048000 --expose-gc ../node_modules/snarkjs/cli.js zkey verify "$COMPILED_DIR"/"$CIRCUIT_NAME".r1cs "$PHASE1" "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey
     end=$(date +%s)
     echo "DONE ($((end - start))s)"
 
     echo "====EXPORTING VKEY===="
     start=$(date +%s)
-    node ../node_modules/snarkjs/cli.js zkey export verificationkey "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey "$TRUSTED_SETUP_DIR"/vkey.json
+    $NODE_PATH ../node_modules/snarkjs/cli.js zkey export verificationkey "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey "$TRUSTED_SETUP_DIR"/vkey.json
     end=$(date +%s)
     echo "DONE ($((end - start))s)"
   fi
 
   echo "====GENERATING PROOF FOR SYNC COMMITTEE PERIOD===="
   start=$(date +%s)
-  ../build/prover "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey "$COMPILED_DIR"/"$CIRCUIT_NAME"_cpp/witness.wtns "$SYNC_COMMITTEE_PROOF"/proof.json "$SYNC_COMMITTEE_PROOF"/public.json
+  $PROVER_PATH "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey "$COMPILED_DIR"/"$CIRCUIT_NAME"_cpp/witness.wtns "$SYNC_COMMITTEE_PROOF"/proof.json "$SYNC_COMMITTEE_PROOF"/public.json
   end=$(date +%s)
   echo "DONE ($((end - start))s)"
 

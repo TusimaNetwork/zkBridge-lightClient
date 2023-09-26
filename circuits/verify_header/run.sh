@@ -28,6 +28,9 @@ VERIFIER_DIR=$BASE_CIRCUIT_DIR/contract
 # A patched node
 NODE_PATH=../../../node/out/Release/node
 
+# Rapid snark prover
+PROVER_PATH=../../../rapidsnark/build/prover
+
 run() {
   echo "SLOT: $SLOT"
 
@@ -108,7 +111,7 @@ run() {
 
   echo "====GENERATING PROOF FOR GIVEN SLOT===="
   start=$(date +%s)
-  ../build/prover "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey "$COMPILED_DIR"/"$CIRCUIT_NAME"_cpp/witness.wtns "$SLOT_PROOF"/proof.json "$SLOT_PROOF"/public.json
+  $PROVER_PATH "$TRUSTED_SETUP_DIR"/"$CIRCUIT_NAME".zkey "$COMPILED_DIR"/"$CIRCUIT_NAME"_cpp/witness.wtns "$SLOT_PROOF"/proof.json "$SLOT_PROOF"/public.json
   end=$(date +%s)
   echo "DONE ($((end - start))s)"
 
