@@ -20,5 +20,5 @@
 1. Build circuit `verify_syncCommittee`
     ```bash
     cd verify_syncCommittee
-    bash run.sh
+    PERIOD=727 bash run.sh
     ```
