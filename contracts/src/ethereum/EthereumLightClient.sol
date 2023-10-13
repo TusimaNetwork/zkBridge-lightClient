@@ -75,7 +75,11 @@ contract EthereumLightClient is ILightClientGetter, ILightClientSetter, Ownable 
         require(syncCommitteeRootByPeriod[currentPeriod] != 0,"Sync committee was never updated for this period");
         bytes32 syncCommitteeRoot = syncCommitteeRootByPeriod[currentPeriod];
         require(syncCommitteeRootToPoseidon[syncCommitteeRoot] != 0, "Must map sync committee root to poseidon");
-        _verifyHeader(update, syncCommitteeRootToPoseidon[syncCommitteeRoot]);
+        uint64 currentPeriod = _getPeriodFromSlot(update.finalizedHeader.slot);
+        require(syncCommitteeRootByPeriod[currentPeriod] != 0,"Sync committee was never updated for this period");
+        bytes32 syncCommitteeRoot = syncCommitteeRootByPeriod[currentPeriod];
+        require(syncCommitteeRootToPoseidon[syncCommitteeRoot] != 0, "Must map sync committee root to poseidon");
+        _verifyHeader(update, syncCommitteeRootToPoseidon[syncCommitteeRoot], syncCommitteeRootToPoseidon[syncCommitteeRoot]);
         _updateHeader(update);
     }
 
@@ -94,7 +98,7 @@ contract EthereumLightClient is ILightClientGetter, ILightClientSetter, Ownable 
         bytes32 nextSyncCommitteePoseidon,
         Groth16Proof calldata commitmentMappingProof
     ) external override isActive {
-        _verifyHeader(update, nextSyncCommitteePoseidon);
+        _verifyHeader(update, nextSyncCommitteePoseidon, nextSyncCommitteePoseidon);
         _updateHeader(update);
 
         uint64 lastPeriod = _getPeriodFromSlot(update.finalizedHeader.slot)-1;
@@ -176,9 +180,9 @@ contract EthereumLightClient is ILightClientGetter, ILightClientSetter, Ownable 
 
         require(
             _headerBLSVerify(
-                signingRoot,
-                syncCommitteePoseidon,
-                update.signature.participation,
+                signingRoot, 
+                syncCommitteeRootByPeriod[currentPeriod], 
+                update.signature.participation, 
                 update.signature.proof
             ),
             "Signature is invalid"
@@ -187,7 +191,7 @@ contract EthereumLightClient is ILightClientGetter, ILightClientSetter, Ownable 
 
     function _updateHeader(HeaderUpdate calldata headerUpdate) internal {
         require(
-            headerUpdate.finalizedHeader.slot >= headSlot,
+            headerUpdate.finalizedHeader.slot >= headSlot, 
             "Update slot must be greater than the current head"
         );
         require(
@@ -207,14 +211,14 @@ contract EthereumLightClient is ILightClientGetter, ILightClientSetter, Ownable 
         );
     }
 
-    /// @notice Maps a simple serialize merkle root to a poseidon merkle root with a zkSNARK.
+    /// @notice Maps a simple serialize merkle root to a poseidon merkle root with a zkSNARK. 
     /// @param sszCommitment sync committee root(ssz)
     /// @param syncCommitteePoseidon sync committee poseidon hash
     /// @param proof A zkSnarks proof to asserts that:
     ///              SimpleSerialize(syncCommittee) == Poseidon(syncCommittee).
     function _mapRootToPoseidon(
-        bytes32 sszCommitment,
-        bytes32 syncCommitteePoseidon,
+        bytes32 syncCommitteeRoot, 
+        bytes32 syncCommitteePoseidon, 
         Groth16Proof calldata proof
     ) internal {
         uint256[33] memory inputs;
@@ -239,9 +243,9 @@ contract EthereumLightClient is ILightClientGetter, ILightClientSetter, Ownable 
     /// @param signingRoot a parameter just like in doxygen (must be followed by parameter name)
     /// @return bool true/false
     function _headerBLSVerify(
-        bytes32 signingRoot,
-        bytes32 syncCommitteePoseidon,
-        uint256 claimedParticipation,
+        bytes32 signingRoot, 
+        bytes32 syncCommitteeRoot, 
+        uint256 claimedParticipation, 
         Groth16Proof calldata proof
     ) internal view returns (bool) {
         uint256[34] memory inputs;
