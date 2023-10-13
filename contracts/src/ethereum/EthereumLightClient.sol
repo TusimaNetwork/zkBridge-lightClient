@@ -207,7 +207,7 @@ contract EthereumLightClient is ILightClientGetter, ILightClientSetter, Ownable 
         );
     }
 
-    /// @notice Maps a simple serialize merkle root to a poseidon merkle root with a zkSNARK.
+    /// @notice Maps a simple serialize merkle root to a poseidon merkle root with a zkSNARK. 
     /// @param sszCommitment sync committee root(ssz)
     /// @param syncCommitteePoseidon sync committee poseidon hash
     /// @param proof A zkSnarks proof to asserts that:
