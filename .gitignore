@@ -1,2 +1,12 @@
 
 circuits/node_modules/
+.idea
+compiler_config.json
+
+*.toml
+
+artifacts/
+
+contracts/foundry.toml
+
+.DS_Store
