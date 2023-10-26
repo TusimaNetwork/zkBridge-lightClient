@@ -196,7 +196,7 @@ contract EthereumLightClient is ILightClientGetter, ILightClientSetter, Ownable 
         headSlot = headerUpdate.finalizedHeader.slot;
         headBlockNumber = headerUpdate.blockNumber;
         slot2block[headerUpdate.finalizedHeader.slot] = headerUpdate.blockNumber;
-        executionStateRoots[headerUpdate.blockNumber] = headerUpdate.executionStateRoot;
+        executionStateRoots[headerUpdate.finalizedHeader.slot] = headerUpdate.executionStateRoot;
 
         emit HeaderUpdated(
             headerUpdate.finalizedHeader.slot, 
