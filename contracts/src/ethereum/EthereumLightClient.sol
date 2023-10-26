@@ -38,10 +38,10 @@ contract EthereumLightClient is ILightClientGetter, ILightClientSetter, Ownable 
     uint64 public headBlockNumber;
     uint256 public latestSyncCommitteePeriod;
 
-    mapping(uint64 => uint64) public slot2block;
-    mapping(uint64 => bytes32) public executionStateRoots;
-    mapping(uint256 => bytes32) public syncCommitteeRootByPeriod;
-    mapping(bytes32 => bytes32) public syncCommitteeRootToPoseidon;
+    mapping(uint64 => uint64) internal _slot2block;
+    mapping(uint64 => bytes32) internal _executionStateRoots;
+    mapping(uint256 => bytes32) internal _syncCommitteeRootByPeriod;
+    mapping(bytes32 => bytes32) internal _syncCommitteeRootToPoseidon;
 
     event HeaderUpdated(uint64 indexed slot, uint64 indexed blockNumber, bytes32 indexed executionRoot);
     event SyncCommitteeUpdated(uint64 indexed period, bytes32 indexed root);
@@ -60,8 +60,8 @@ contract EthereumLightClient is ILightClientGetter, ILightClientSetter, Ownable 
         SECONDS_PER_SLOT = secondsPerSlot;
         defaultForkVersion = forkVersion;
         latestSyncCommitteePeriod = startSyncCommitteePeriod;
-        syncCommitteeRootByPeriod[startSyncCommitteePeriod] = startSyncCommitteeRoot;
-        syncCommitteeRootToPoseidon[startSyncCommitteeRoot] = startSyncCommitteePoseidon;
+        _syncCommitteeRootByPeriod[startSyncCommitteePeriod] = startSyncCommitteeRoot;
+        _syncCommitteeRootToPoseidon[startSyncCommitteeRoot] = startSyncCommitteePoseidon;
         active = true;
     }
 
@@ -95,7 +95,7 @@ contract EthereumLightClient is ILightClientGetter, ILightClientSetter, Ownable 
 
         uint64 currentPeriod = _getPeriodFromSlot(update.finalizedHeader.slot);
         uint64 nextPeriod = currentPeriod + 1;
-        require(syncCommitteeRootByPeriod[nextPeriod] == 0, "Next sync committee was already initialized");
+        require(_syncCommitteeRootByPeriod[nextPeriod] == 0, "Next sync committee was already initialized");
         require(SimpleSerialize.isValidMerkleBranch(
                 update.nextSyncCommitteeRoot,
                 NEXT_SYNC_COMMITTEE_INDEX,
@@ -106,16 +106,8 @@ contract EthereumLightClient is ILightClientGetter, ILightClientSetter, Ownable 
         _mapRootToPoseidon(update.nextSyncCommitteeRoot, nextSyncCommitteePoseidon, commitmentMappingProof);
 
         latestSyncCommitteePeriod = nextPeriod;
-        syncCommitteeRootByPeriod[nextPeriod] = update.nextSyncCommitteeRoot;
+        _syncCommitteeRootByPeriod[nextPeriod] = update.nextSyncCommitteeRoot;
         emit SyncCommitteeUpdated(nextPeriod, update.nextSyncCommitteeRoot);
-    }
-
-    /// @notice A view function that allows you to get an executionStateRoot from a valid header
-    /// @dev The executionStateRoot can be used to verify that if something happened on the source chain
-    /// @param slot The slot corresponding to the executionStateRoot
-    /// @return bytes32 Return the executionStateRoot corresponding to the slot
-    function executionStateRoot(uint64 slot) external override view returns (bytes32) {
-        return executionStateRoots[slot];
     }
 
     modifier isActive {
@@ -169,13 +161,13 @@ contract EthereumLightClient is ILightClientGetter, ILightClientSetter, Ownable 
             GENESIS_VALIDATORS_ROOT
         );
         require(
-            syncCommitteeRootByPeriod[currentPeriod] != 0, 
+            _syncCommitteeRootByPeriod[currentPeriod] != 0, 
             "Sync committee was never updated for this period"
         );
         require(
             _headerBLSVerify(
                 signingRoot, 
-                syncCommitteeRootByPeriod[currentPeriod], 
+                _syncCommitteeRootByPeriod[currentPeriod], 
                 update.signature.participation, 
                 update.signature.proof
             ), 
@@ -195,8 +187,8 @@ contract EthereumLightClient is ILightClientGetter, ILightClientSetter, Ownable 
 
         headSlot = headerUpdate.finalizedHeader.slot;
         headBlockNumber = headerUpdate.blockNumber;
-        slot2block[headerUpdate.finalizedHeader.slot] = headerUpdate.blockNumber;
-        executionStateRoots[headerUpdate.finalizedHeader.slot] = headerUpdate.executionStateRoot;
+        _slot2block[headerUpdate.finalizedHeader.slot] = headerUpdate.blockNumber;
+        _executionStateRoots[headerUpdate.finalizedHeader.slot] = headerUpdate.executionStateRoot;
 
         emit HeaderUpdated(
             headerUpdate.finalizedHeader.slot, 
@@ -227,12 +219,12 @@ contract EthereumLightClient is ILightClientGetter, ILightClientSetter, Ownable 
             SyncCommitteeRootToPoseidonVerifier.verifyCommitmentMappingProof(proof.a, proof.b, proof.c, inputs), 
             "Proof is invalid"
         );
-        syncCommitteeRootToPoseidon[syncCommitteeRoot] = syncCommitteePoseidon;
+        _syncCommitteeRootToPoseidon[syncCommitteeRoot] = syncCommitteePoseidon;
     }
 
     /// @notice Verify BLS signature
     /// @dev Does an aggregated BLS signature verification with a zkSNARK. The proof asserts that:
-    ///      Poseidon(validatorPublicKeys) == syncCommitteeRootToPoseidon[syncCommitteeRoot]
+    ///      Poseidon(validatorPublicKeys) == _syncCommitteeRootToPoseidon[syncCommitteeRoot]
     ///      aggregatedPublicKey = InnerProduct(validatorPublicKeys, bitmap)
     ///      BLSVerify(aggregatedPublicKey, signature) == true
     /// @param signingRoot a parameter just like in doxygen (must be followed by parameter name)
@@ -243,10 +235,10 @@ contract EthereumLightClient is ILightClientGetter, ILightClientSetter, Ownable 
         uint256 claimedParticipation, 
         Groth16Proof calldata proof
     ) internal view returns (bool) {
-        require(syncCommitteeRootToPoseidon[syncCommitteeRoot] != 0, "Must map sync committee root to poseidon");
+        require(_syncCommitteeRootToPoseidon[syncCommitteeRoot] != 0, "Must map sync committee root to poseidon");
         uint256[34] memory inputs;
         inputs[0] = claimedParticipation;
-        inputs[1] = uint256(syncCommitteeRootToPoseidon[syncCommitteeRoot]);
+        inputs[1] = uint256(_syncCommitteeRootToPoseidon[syncCommitteeRoot]);
         uint256 signingRootNumeric = uint256(signingRoot);
         for (uint256 i = 0; i < 32; i++) {
             inputs[(32 - 1 - i) + 2] = signingRootNumeric % 2 ** 8;
@@ -269,5 +261,25 @@ contract EthereumLightClient is ILightClientGetter, ILightClientSetter, Ownable 
 
     function setActive(bool newActive) public onlyOwner {
         active = newActive;
+    }
+
+    function slot2block(uint64 _slot) external view returns (uint64) {
+        return _slot2block[_slot];
+    }
+
+    function syncCommitteeRootByPeriod(uint256 _period) external view returns (bytes32) {
+        return _syncCommitteeRootByPeriod[_period];
+    }
+
+    function syncCommitteeRootToPoseidon(bytes32 _root) external view returns (bytes32) {
+        return _syncCommitteeRootToPoseidon[_root];
+    }
+
+    /// @notice A view function that allows you to get an executionStateRoot from a valid header
+    /// @dev The executionStateRoot can be used to verify that if something happened on the source chain
+    /// @param slot The slot corresponding to the executionStateRoot
+    /// @return bytes32 Return the executionStateRoot corresponding to the slot
+    function executionStateRoot(uint64 slot) external override view returns (bytes32) {
+        return _executionStateRoots[slot];
     }
 }
