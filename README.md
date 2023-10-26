@@ -7,7 +7,7 @@
 
 The **On-chain Light Client** is the central component of Tusima zkBridge. It is an on-chain implementation of the Ethereum light client protocol, and its primary function is to supply the destination chain with trustworthy and authentic source chain block headers. Through the information contained in these block headers, applications on the destination chain can verify any transactions that occurred on the source chain.
 
-For more information about Tusima zkBridge please refer to [here]()(coming soon).
+For more information about Tusima zkBridge please refer to [here](https://tusima.gitbook.io/zkbridge/).
 
 > Notice: Some of the code in this repository comes from [Succinct](https://github.com/succinctlabs).
 
