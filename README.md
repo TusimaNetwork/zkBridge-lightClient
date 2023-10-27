@@ -2,6 +2,7 @@
 
 ![Tusima zkBridge](https://ucarecdn.com/f4e08f06-c238-47f8-b98a-97629c199377/bridgelogo.png)
 
+[![Tests](https://github.com/TusimaNetwork/zkBridge-lightClient/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/TusimaNetwork/zkBridge-lightClient/actions/workflows/test.yml)
 
 ## Overview
 
