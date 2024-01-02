@@ -5,12 +5,13 @@ libs = ["lib"]
 fs_permissions = [{ access = "read", path = "./"}]
 
 [rpc_endpoints]
+bsc-testnet= "${BSCTEST_RPC_URL}"
 goerli = "${GOERLI_RPC_URL}"
-zkevm = "${ZKEVM_RPC_URL}"
-optimism-goerli = "${OPTIMISM_GOERLI_RPC_URL}"
+sepolia = "${SEPOLIA_RPC_URL}"
 
 [etherscan]
+bsc-testnet = { key = "${BSCSCAN_API_KEY}" }
 goerli = { key = "${ETHERSCAN_API_KEY}" }
-optimism-goerli = { key = "${OPTIMISM_ETHERSCAN_API_KEY}" }
+sepolia = { key = "${ETHERSCAN_API_KEY}" }
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

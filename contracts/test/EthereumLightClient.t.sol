@@ -33,7 +33,7 @@ contract EthereumLightClientTest is Test {
         vm.warp(1999999999);
     }
 
-    function testStep() external {
+    function test() public {
         // TODO resolve it
         // HeaderUpdate memory lcUpdate = readLightClientUpdateTestData("goerli", "lightClientUpdate", "5097760");
         HeaderUpdate memory lcUpdate = readLightClientUpdateTestData("goerli", "ssz2Poseidon", "5097760");
