@@ -1,4 +1,4 @@
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.12;
 
 import "forge-std/Script.sol";
 import "../src/ethereum/EthereumLightClient.sol";
@@ -8,6 +8,11 @@ contract DeployLightClient is Script {
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
+
+        string memory logPath = "./exports/address.txt";
+        if (vm.isFile(logPath)) {
+            vm.removeFile(logPath);
+        }
 
         bytes32 goerliGenesisValidatorRoot = vm.envBytes32(
             "GenesisValidatorRoot"
@@ -27,7 +32,7 @@ contract DeployLightClient is Script {
         bytes32 goerliStartSyncCommitteePoseidon = vm.envBytes32(
             "StartSyncCommitteePoseidon"
         );
-        new EthereumLightClient(
+        EthereumLightClient lightClientAddr = new EthereumLightClient(
             goerliGenesisValidatorRoot,
             goerliGenesisType,
             goerliSecondsPerSlot,
@@ -36,6 +41,12 @@ contract DeployLightClient is Script {
             goerliStartSyncCommitteeRoot,
             goerliStartSyncCommitteePoseidon
         );
+        console.log("lightClient", address(lightClientAddr));
+
+        string memory a = "lightClient: ";
+        string memory b = vm.toString(address(lightClientAddr));
+        string memory c = string.concat(a, b);
+        vm.writeLine(logPath, c);
 
         vm.stopBroadcast();
     }
