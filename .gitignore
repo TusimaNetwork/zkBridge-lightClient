@@ -10,3 +10,6 @@ artifacts/
 contracts/foundry.toml
 
 .DS_Store
+contracts/exports/address.txt
+contracts/.DS_Store
+contracts/.gitignore
