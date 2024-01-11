@@ -13,3 +13,16 @@ contracts/foundry.toml
 contracts/exports/address.txt
 contracts/.DS_Store
 contracts/.gitignore
+*.lock
+circuits/verify_header/proof_data*
+circuits/verify_syncCommittee/proof_data*
+circuits/verify_syncCommittee/build
+circuits/verify_header/logs
+circuits/verify_header/build
+scripts/commitment/logs
+scripts/header/logs
+scripts/node_modules
+scripts/build
+scripts/yarn.lock
+scripts/.yarn
+scripts/header/MyLogFile.log
