@@ -6,11 +6,11 @@ async function generateAndSaveInput(slotStr: string) {
   const {slot, proofInput} = await generateInputForProof(slotStr);
 
   // Write object to a block specific folder in circuits directory.
-  const dir = `../../circuits/verify_header/proof_data_${slot}`;
+  const dir = `../circuits/verify_header/proof_data_${slot}`;
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
   }
-  const file = `../../circuits/verify_header/proof_data_${slot}/input.json`;
+  const file = `../circuits/verify_header/proof_data_${slot}/input.json`;
   fs.writeFileSync(
     file,
     JSON.stringify(proofInput)

@@ -51,7 +51,7 @@ run() {
   echo "====GENERATING INPUT FOR PROOF===="
   echo $SLOT_PROOF/input.json
   start=$(date +%s)
-  BEACON_NODE_API=$BEACON_NODE_API yarn ts-node --project ../tsconfig.json ../header/index.ts --slot $SLOT
+  BEACON_NODE_API=$BEACON_NODE_API yarn ts-node --project ./tsconfig.json ./header/index.ts --slot $SLOT
   end=$(date +%s)
   echo "DONE ($((end - start))s)"
 
@@ -114,7 +114,7 @@ run() {
   echo "====GENERATING PACK INPUT FOR PROOF===="
   echo $SLOT_PROOF/packInput.json
   start=$(date +%s)
-  yarn ts-node --project ../tsconfig.json ../header/pack-input.ts --slot $SLOT
+  yarn ts-node --project ./tsconfig.json ./header/pack-input.ts --slot $SLOT
   end=$(date +%s)
   echo "DONE ($((end - start))s)"
   
@@ -134,7 +134,7 @@ run() {
   echo "====GENERATING SPLIT PROOF===="
   echo $SLOT_PROOF/input.json
   start=$(date +%s)
-  yarn ts-node --project ../tsconfig.json ../header/split.ts --slot $SLOT --fullProof $fullProof
+  yarn ts-node --project ./tsconfig.json ./header/split.ts --slot $SLOT --fullProof $fullProof
   end=$(date +%s)
   echo "DONE ($((end - start))s)"
 

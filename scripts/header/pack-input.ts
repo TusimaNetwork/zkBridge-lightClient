@@ -6,12 +6,12 @@ import minimist from 'minimist';
 
 async function generateAndSaveInput(slot: string) {
     // Write object to a block specific folder in circuits directory.
-    const file = `../../circuits/verify_header/proof_data_${slot}/input.json`;
+    const file = `./../circuits/verify_header/proof_data_${slot}/input.json`;
     const inputs = JSON.parse(fs.readFileSync(file).toString());
 
     const input = { inputs, circuit: 'verify_header' };
 
-    const packFile = `../../circuits/verify_header/proof_data_${slot}/packInput.json`;
+    const packFile = `./../circuits/verify_header/proof_data_${slot}/packInput.json`;
     fs.writeFileSync(packFile, JSON.stringify(input));
     console.log('Finished writing pack input file', packFile);
 }

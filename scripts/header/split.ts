@@ -14,15 +14,15 @@ async function generateAndSaveInput(slot: string, fullProofStr: string) {
     }
 
     // Write object to a block specific folder in circuits directory.
-    const dir = `../../circuits/verify_header/proof_data_${slot}`;
+    const dir = `./../circuits/verify_header/proof_data_${slot}`;
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
     }
-    const file = `../../circuits/verify_header/proof_data_${slot}/proof.json`;
+    const file = `./../circuits/verify_header/proof_data_${slot}/proof.json`;
     fs.writeFileSync(file, JSON.stringify(fullProof.proof));
     console.log('Finished writing proof file', file);
 
-    const publicFile = `../../circuits/verify_header/proof_data_${slot}/public.json`;
+    const publicFile = `./../circuits/verify_header/proof_data_${slot}/public.json`;
     fs.writeFileSync(publicFile, JSON.stringify(fullProof.pub_signals));
     console.log('Finished writing public file', publicFile);
 }
