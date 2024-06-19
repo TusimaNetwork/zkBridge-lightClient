@@ -111,6 +111,7 @@ Testing the circuit program is indeed a resource-intensive task, requiring subst
     cd verify_header
     SLOT=6154570 bash run.sh
     ```
+    > Notice that, you have to use the patched node instead of regular node, to install the patched node please check [here](./docs/installation-for-patched-node.md).
 
 1. Build circuit `verify_syncCommittee`
     ```bash
